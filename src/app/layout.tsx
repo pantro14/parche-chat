@@ -1,4 +1,5 @@
 import LayoutProvider from '@/providers/layout-provider';
+import ReduxProvider from '@/providers/redux-provider';
 import ThemeProvider from '@/providers/theme-providers';
 import { AntdRegistry } from '@ant-design/nextjs-registry';
 import '@ant-design/v5-patch-for-react-19';
@@ -28,9 +29,11 @@ export default function RootLayout({
       <html lang='en' className={`${montserrat.className} font-sans`}>
         <body>
           <AntdRegistry>
-            <LayoutProvider>
-              <ThemeProvider>{children}</ThemeProvider>
-            </LayoutProvider>
+            <ThemeProvider>
+              <ReduxProvider>
+                <LayoutProvider>{children}</LayoutProvider>
+              </ReduxProvider>
+            </ThemeProvider>
           </AntdRegistry>
         </body>
       </html>

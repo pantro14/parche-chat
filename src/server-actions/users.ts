@@ -20,10 +20,11 @@ export const getCurrentinUserFromDB = async () => {
       bio: '',
     });
     return JSON.parse(JSON.stringify(newUser));
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  } catch ({ message }: any) {
-    return {
-      error: message,
-    };
+  } catch (error: unknown) {
+    if (error instanceof Error) {
+      return {
+        error: error.message,
+      };
+    }
   }
 };

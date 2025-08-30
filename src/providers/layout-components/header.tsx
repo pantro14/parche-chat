@@ -1,22 +1,31 @@
-import { UserType } from '@/interfaces';
+import { RootState } from '@/redux/store';
+import { SetCurrentUser, UserState } from '@/redux/user/userSlice';
 import { getCurrentinUserFromDB } from '@/server-actions/users';
-import { Avatar, message } from 'antd';
+import { Avatar } from 'antd';
 import { useEffect, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import CurrentUserInfo from './current-user-info';
 
 function Header() {
-  const [currentUser, setCurrentUser] = useState<UserType | null>(null);
   const [showCurrentUserInfo, setShowCurrentUserInfo] =
     useState<boolean>(false);
+  const dispatch = useDispatch();
+
+  const { currentUserData }: UserState = useSelector(
+    (state: RootState) => state.user
+  );
 
   const getCurrentUser = async () => {
     try {
       const response = await getCurrentinUserFromDB();
+      dispatch(SetCurrentUser(response));
       if (response.error) throw new Error(response.error);
-      setCurrentUser(response);
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    } catch (error: any) {
-      message.error(error.message);
+    } catch (error: unknown) {
+      if (error instanceof Error) {
+        return {
+          error: error.message,
+        };
+      }
     }
   };
 
@@ -33,10 +42,10 @@ function Header() {
         <h1 className='text-2xl font-semibold text-white'>Parche Chat</h1>
       </div>
       <div className='gap-5 flex items-center'>
-        <span className='text-white'>{currentUser?.name}</span>
+        <span className='text-white'>{currentUserData?.name}</span>
         <Avatar
           className='cursor-pointer'
-          src={currentUser?.profilePicture}
+          src={currentUserData?.profilePicture}
           onClick={() => {
             setShowCurrentUserInfo(true);
           }}
@@ -44,7 +53,6 @@ function Header() {
       </div>
       {showCurrentUserInfo && (
         <CurrentUserInfo
-          currentUser={currentUser as UserType}
           showCurrentUserInfo={showCurrentUserInfo}
           setShowCurrentUserInfo={setShowCurrentUserInfo}
         />

@@ -12,12 +12,15 @@
     "@ant-design/nextjs-registry": "^1.1.0",
     "@ant-design/v5-patch-for-react-19": "^1.0.3",
     "@clerk/nextjs": "^6.31.6",
+    "@reduxjs/toolkit": "^2.8.2",
     "antd": "^5.27.1",
     "dayjs": "^1.11.16",
     "mongoose": "^8.18.0",
     "next": "15.5.2",
     "react": "19.1.0",
-    "react-dom": "19.1.0"
+    "react-dom": "19.1.0",
+    "react-redux": "^9.2.0",
+    "redux": "^5.0.1"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",
