@@ -7,3 +7,11 @@ export function assertUserIsUpdated(
     throw new Error(userReponse.error);
   }
 }
+
+export function assertUsersAreGotten(
+  userReponse: { error: string } | UserType[]
+): asserts userReponse is UserType[] {
+  if ('error' in userReponse) {
+    throw new Error(userReponse.error);
+  }
+}

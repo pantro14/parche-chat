@@ -13,6 +13,7 @@ export default function ThemeProvider({
         token: {
           colorPrimary: '#31304D',
           borderRadius: 2,
+          fontFamily: 'Montserrat, sans-serif',
         },
         components: {
           Button: {

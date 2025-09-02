@@ -52,3 +52,18 @@ export const updateUserProfilePicture = async (
     }
   }
 };
+
+export const getAllUsers = async () => {
+  try {
+    await connectMongoDB();
+    const users = await UserModel.find({});
+    await new Promise((resolve) => setTimeout(resolve, 2000)); // Simulate network delay
+    return JSON.parse(JSON.stringify(users));
+  } catch (error: unknown) {
+    if (error instanceof Error) {
+      return {
+        error: error.message,
+      };
+    }
+  }
+};
