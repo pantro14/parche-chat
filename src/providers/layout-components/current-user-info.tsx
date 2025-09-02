@@ -1,12 +1,15 @@
+import uploadNewImage from '@/helpers/image';
+import { assertUserIsUpdated } from '@/helpers/type-guards';
 import { RootState } from '@/redux/store';
-import { UserState } from '@/redux/user/userSlice';
+import { SetCurrentUser, UserState } from '@/redux/user/userSlice';
+import { updateUserProfilePicture } from '@/server-actions/users';
 import { useClerk } from '@clerk/nextjs';
-import { Button, Divider, Drawer, message } from 'antd';
+import { Button, Divider, Drawer, message, Upload } from 'antd';
 import dayjs from 'dayjs';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { Dispatch, useState } from 'react';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 
 interface CurrentUserInfoProps {
   showCurrentUserInfo: boolean;
@@ -17,12 +20,15 @@ function CurrentUserInfo({
   showCurrentUserInfo,
   setShowCurrentUserInfo,
 }: CurrentUserInfoProps) {
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const [loading, setLoading] = useState<boolean>(false);
+
   const { signOut } = useClerk();
   const router = useRouter();
-  const [loading, setLoading] = useState<boolean>(false);
   const { currentUserData }: UserState = useSelector(
     (state: RootState) => state.user
   );
+  const dispatch = useDispatch();
 
   const getProperty = (key: string, value: string) => {
     return (
@@ -47,6 +53,26 @@ function CurrentUserInfo({
     }
   };
 
+  const onUploadPicture = async () => {
+    setLoading(true);
+    try {
+      const { secure_url: url } = await uploadNewImage(selectedFile as File);
+      const userReponse = await updateUserProfilePicture(
+        currentUserData!._id as string,
+        url
+      );
+      assertUserIsUpdated(userReponse);
+      dispatch(SetCurrentUser(userReponse));
+      setSelectedFile(null);
+    } catch (error: unknown) {
+      if (error instanceof Error) {
+        console.error(error);
+      }
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <Drawer
       open={showCurrentUserInfo}
@@ -56,16 +82,29 @@ function CurrentUserInfo({
       {currentUserData && (
         <div className='flex flex-col gap-5'>
           <div className='flex flex-col justify-center items-center gap-2'>
-            <Image
-              src={currentUserData?.profilePicture}
-              width={120}
-              height={120}
-              alt='profile'
-              className='rounded-full object-cover'
-            />
-            <span className='text-gray-500 cursor-pointer'>
-              Change Profile Picture
-            </span>
+            {!selectedFile && (
+              <Image
+                src={currentUserData?.profilePicture}
+                width={120}
+                height={120}
+                alt='profile'
+                className='rounded-full object-cover'
+              />
+            )}
+
+            <Upload
+              beforeUpload={(file) => {
+                setSelectedFile(file);
+                return false;
+              }}
+              listType={selectedFile ? 'picture-circle' : 'text'}
+              showUploadList={selectedFile ? { showPreviewIcon: true } : false}
+              maxCount={1}
+            >
+              <span className='text-gray-500 cursor-pointer'>
+                Change Profile Picture
+              </span>
+            </Upload>
           </div>
           <Divider className='my-1 border-gray-200' />
 
@@ -80,12 +119,23 @@ function CurrentUserInfo({
               )
             )}
           </div>
-          <div className='mt-5'>
+          <div className='mt-5 flex flex-col gap-3'>
+            {selectedFile && (
+              <Button
+                className='w-full'
+                color='primary'
+                variant='outlined'
+                loading={loading}
+                onClick={() => onUploadPicture()}
+              >
+                Upload Picture
+              </Button>
+            )}
             <Button
               className='w-full'
               color='danger'
               variant='solid'
-              loading={loading}
+              loading={!selectedFile && loading}
               onClick={() => onLogout()}
             >
               Logout

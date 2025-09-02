@@ -28,3 +28,27 @@ export const getCurrentinUserFromDB = async () => {
     }
   }
 };
+
+export const updateUserProfilePicture = async (
+  userId: string,
+  profilePicture: string
+) => {
+  try {
+    await connectMongoDB();
+    const updatedUser = await UserModel.findByIdAndUpdate(
+      userId,
+      { profilePicture },
+      { new: true }
+    );
+    if (updatedUser) {
+      return JSON.parse(JSON.stringify(updatedUser));
+    }
+    throw new Error('User not found');
+  } catch (error: unknown) {
+    if (error instanceof Error) {
+      return {
+        error: error.message,
+      };
+    }
+  }
+};
