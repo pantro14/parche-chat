@@ -25,6 +25,7 @@ export const getChatsByUserId = async (userId: string) => {
   try {
     const users = await ChatModel.find({ users: { $in: [userId] } })
       .populate('users')
+      .populate('lastMessage')
       .sort({ updatedAt: -1 });
     await new Promise((resolve) => setTimeout(resolve, 2000)); // TODO: Remove this line
     return JSON.parse(JSON.stringify(users));

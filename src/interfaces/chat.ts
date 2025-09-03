@@ -5,7 +5,7 @@ export interface ChatType {
   _id: string;
   users: UserType[] | string[];
   createdBy: UserType['_id'];
-  lastMessage: MessageType['_id'];
+  lastMessage: MessageType | MessageType['_id'];
   isGroupChat: boolean;
   groupName: string;
   groupProfilePicture: string;

@@ -24,7 +24,6 @@ function ChatList() {
       assertHasUser(currentUserData);
       const response = await getChatsByUserId(currentUserData._id);
       assertChatsAreGotten(response);
-      console.log(response);
       dispatch(SetChats(response));
     } catch (error) {
       if (error instanceof Error) {

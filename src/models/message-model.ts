@@ -12,9 +12,9 @@ const MessageSchema = new Schema(
   { timestamps: true }
 );
 
-if (models && models['chats']) {
-  deleteModel('chats');
+if (models && models['messages']) {
+  deleteModel('messages');
 }
 
-const MessageModel = model('chats', MessageSchema);
+const MessageModel = model('messages', MessageSchema);
 export default MessageModel;

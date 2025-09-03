@@ -6,9 +6,12 @@ import Chats from './chat-components/chats';
 
 export default function Home() {
   return (
-    <div className='flex h-[85vh]'>
+    <div className='flex h-[92vh]'>
       <Chats />
-      <Divider style={{ height: 'auto' }} type='vertical' />
+      <Divider
+        style={{ height: 'auto', margin: '0', padding: '0' }}
+        type='vertical'
+      />
       <ChatArea />
     </div>
   );

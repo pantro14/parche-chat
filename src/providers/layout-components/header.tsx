@@ -9,11 +9,12 @@ import CurrentUserInfo from './current-user-info';
 function Header() {
   const [showCurrentUserInfo, setShowCurrentUserInfo] =
     useState<boolean>(false);
-  const dispatch = useDispatch();
 
   const { currentUserData }: UserState = useSelector(
     (state: RootState) => state.user
   );
+
+  const dispatch = useDispatch();
 
   const getCurrentUser = async () => {
     try {

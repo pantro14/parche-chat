@@ -1,6 +1,8 @@
 import { UserType } from '@/interfaces';
 import { ChatType } from '@/interfaces/chat';
+import { MessageType } from '@/interfaces/message';
 
+// User Guards
 export function assertHasUser(
   userData: UserType | null
 ): asserts userData is UserType {
@@ -25,6 +27,7 @@ export function assertUsersAreGotten(
   }
 }
 
+// Chat Guards
 export function assertChatisCreated(
   chatReponse: { error: string } | ChatType
 ): asserts chatReponse is ChatType {
@@ -38,5 +41,22 @@ export function assertChatsAreGotten(
 ): asserts chatReponse is ChatType[] {
   if ('error' in chatReponse) {
     throw new Error(chatReponse.error);
+  }
+}
+
+// Message Guards
+export function assertMessageIsSent(
+  messageReponse: { error: string } | MessageType
+): asserts messageReponse is MessageType {
+  if ('error' in messageReponse) {
+    throw new Error(messageReponse.error);
+  }
+}
+
+export function assertMessagesAreGotten(
+  messageReponse: { error: string } | MessageType[]
+): asserts messageReponse is MessageType[] {
+  if ('error' in messageReponse) {
+    throw new Error(messageReponse.error);
   }
 }
