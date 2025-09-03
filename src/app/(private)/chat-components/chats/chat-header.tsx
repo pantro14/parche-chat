@@ -1,4 +1,4 @@
-import { Dropdown, MenuProps } from 'antd';
+import { Dropdown, Input, MenuProps } from 'antd';
 import { useState } from 'react';
 import NewChatModal from './new-chat-modal';
 
@@ -18,7 +18,7 @@ function ChatHeader() {
     },
   ];
   return (
-    <div>
+    <div className='my-2 space-y-5'>
       <div className='flex justify-between items-center'>
         <h1 className='text-xl text-gray-500 font-bold uppercase'>My Chats</h1>
         <Dropdown.Button
@@ -27,15 +27,17 @@ function ChatHeader() {
           menu={{ items }}
         >
           New
-        </Dropdown.Button>
-
-        {showChatModal && (
-          <NewChatModal
-            showNewChatModal={showChatModal}
-            setShowNewChatModal={setShowChatModal}
-          />
-        )}
+        </Dropdown.Button>{' '}
       </div>
+
+      <Input placeholder='Search a chat...' />
+
+      {showChatModal && (
+        <NewChatModal
+          showNewChatModal={showChatModal}
+          setShowNewChatModal={setShowChatModal}
+        />
+      )}
     </div>
   );
 }

@@ -2,7 +2,7 @@ import { deleteModel, model, models, Schema } from 'mongoose';
 
 const ChatSchema = new Schema(
   {
-    user: { type: [Schema.Types.ObjectId], ref: 'users' },
+    users: { type: [Schema.Types.ObjectId], ref: 'users' },
     createdBy: { type: Schema.Types.ObjectId, ref: 'users' },
     lastMessage: { type: Schema.Types.ObjectId, ref: 'messages' },
     isGroupChat: { type: Boolean, default: false },

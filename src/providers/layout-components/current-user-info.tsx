@@ -1,7 +1,7 @@
 import uploadNewImage from '@/helpers/image';
 import { assertUserIsUpdated } from '@/helpers/type-guards';
 import { RootState } from '@/redux/store';
-import { SetCurrentUser, UserState } from '@/redux/user/userSlice';
+import { SetCurrentUser, UserState } from '@/redux/userSlice';
 import { updateUserProfilePicture } from '@/server-actions/users';
 import { useClerk } from '@clerk/nextjs';
 import { Button, Divider, Drawer, message, Upload } from 'antd';
@@ -44,6 +44,7 @@ function CurrentUserInfo({
       setLoading(true);
       await signOut();
       setShowCurrentUserInfo(false);
+      message.success('Logged out successfully');
       router.push('/sign-in');
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (error: any) {
@@ -62,6 +63,7 @@ function CurrentUserInfo({
         url
       );
       assertUserIsUpdated(userReponse);
+      message.success('Profile picture updated successfully');
       dispatch(SetCurrentUser(userReponse));
       setSelectedFile(null);
     } catch (error: unknown) {

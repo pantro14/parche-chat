@@ -57,7 +57,7 @@ export const getAllUsers = async () => {
   try {
     await connectMongoDB();
     const users = await UserModel.find({});
-    await new Promise((resolve) => setTimeout(resolve, 2000)); // Simulate network delay
+    await new Promise((resolve) => setTimeout(resolve, 1000)); // TODO: Remove this line
     return JSON.parse(JSON.stringify(users));
   } catch (error: unknown) {
     if (error instanceof Error) {

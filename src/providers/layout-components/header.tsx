@@ -1,5 +1,5 @@
 import { RootState } from '@/redux/store';
-import { SetCurrentUser, UserState } from '@/redux/user/userSlice';
+import { SetCurrentUser, UserState } from '@/redux/userSlice';
 import { getCurrentinUserFromDB } from '@/server-actions/users';
 import { Avatar } from 'antd';
 import { useEffect, useState } from 'react';

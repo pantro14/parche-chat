@@ -1,12 +1,13 @@
+import { App } from 'antd';
 import Content from './layout-components/content';
 import HeaderWrapper from './layout-components/header-wrapper';
 
 function LayoutProvider({ children }: { children: React.ReactNode }) {
   return (
-    <div>
+    <App>
       <HeaderWrapper />
       <Content>{children}</Content>
-    </div>
+    </App>
   );
 }
 
