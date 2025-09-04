@@ -4,7 +4,7 @@ import { UserType } from './user';
 export type MessageType = {
   _id: string;
   chat: ChatType | ChatType['_id'];
-  sender: UserType;
+  sender: UserType | string;
   text: string;
   images: string[];
   readBy: string[];

@@ -1,4 +1,5 @@
 import { formatDateTime } from '@/helpers/date-format';
+import { UserType } from '@/interfaces';
 import { MessageType } from '@/interfaces/message';
 import { ChatState } from '@/redux/chatSlice';
 import { RootState } from '@/redux/store';
@@ -18,11 +19,13 @@ function MessagePopup({ message }: MessagePopUpProps) {
     (state: RootState) => state.user
   );
 
-  if (message.sender?._id === currentUserData?._id) {
+  const sender = message.sender as UserType;
+
+  if (sender?._id === currentUserData?._id) {
     return (
       <div className='flex justify-end gap-2'>
         <div className='flex flex-col gap-2'>
-          <p className='bg-primary text-white py-2 px-5 rounded-xl rounded-tl-none'>
+          <p className='bg-primary text-white py-2 px-5 rounded-xl rounded-tl-none text-sm'>
             {message.text}
           </p>
           <span className='text-xs text-gray-500'>
@@ -30,7 +33,7 @@ function MessagePopup({ message }: MessagePopUpProps) {
           </span>
         </div>
         <Avatar
-          src={message.sender.profilePicture}
+          src={sender.profilePicture}
           alt='avatar'
           className='w-6 h-6 rounded-full'
         />
@@ -40,7 +43,7 @@ function MessagePopup({ message }: MessagePopUpProps) {
     return (
       <div className='flex gap-2'>
         <Avatar
-          src={message.sender.profilePicture}
+          src={sender.profilePicture}
           alt='avatar'
           className='w-6 h-6 rounded-full'
         />
@@ -48,7 +51,7 @@ function MessagePopup({ message }: MessagePopUpProps) {
         <div className='flex flex-col gap-2'>
           <div className='bg-gray-200 py-2 px-7 rounded-xl rounded-tr-none'>
             <span className='text-blue-500 text-xs font-semibold'>
-              {message.sender?.name}
+              {sender?.name}
             </span>
             <p className='text-black m-0 pt-1 text-sm'>{message.text}</p>
           </div>

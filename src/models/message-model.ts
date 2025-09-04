@@ -7,7 +7,6 @@ const MessageSchema = new Schema(
     text: { type: String, required: true },
     images: { type: [String], default: '' },
     readBy: { type: [Schema.Types.ObjectId], ref: 'users' },
-    unreadCounts: { type: Object, default: {} },
   },
   { timestamps: true }
 );

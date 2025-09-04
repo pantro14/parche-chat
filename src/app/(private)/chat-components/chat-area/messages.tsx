@@ -2,7 +2,8 @@ import { assertMessagesAreGotten } from '@/helpers/type-guards';
 import { MessageType } from '@/interfaces/message';
 import { ChatState } from '@/redux/chatSlice';
 import { RootState } from '@/redux/store';
-import { getChatMessages } from '@/server-actions/messages';
+import { UserState } from '@/redux/userSlice';
+import { getChatMessages, readAllMessages } from '@/server-actions/messages';
 import { message } from 'antd';
 import { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
@@ -14,6 +15,9 @@ function Messages() {
 
   const { selectedChat }: ChatState = useSelector(
     (state: RootState) => state.chats
+  );
+  const { currentUserData }: UserState = useSelector(
+    (state: RootState) => state.user
   );
 
   const getMessages = async () => {
@@ -33,11 +37,14 @@ function Messages() {
   };
 
   useEffect(() => {
-    getMessages();
+    if (selectedChat) {
+      getMessages();
+      readAllMessages(selectedChat?._id, currentUserData!._id);
+    }
   }, [selectedChat]);
 
   return (
-    <div className='flex-1 p-3 '>
+    <div className='flex-1 p-3 overflow-y-auto scrollbar-hide'>
       <div className='flex flex-col gap-3'>
         {messages.map((message) => {
           return <MessagePopup key={message._id} message={message} />;

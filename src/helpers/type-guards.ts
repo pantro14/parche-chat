@@ -19,7 +19,7 @@ export function assertUserIsUpdated(
   }
 }
 
-export function assertUsersAreGotten(
+export function assertAreUsers(
   userReponse: { error: string } | UserType[]
 ): asserts userReponse is UserType[] {
   if ('error' in userReponse) {
@@ -28,7 +28,7 @@ export function assertUsersAreGotten(
 }
 
 // Chat Guards
-export function assertChatisCreated(
+export function assertIsChat(
   chatReponse: { error: string } | ChatType
 ): asserts chatReponse is ChatType {
   if ('error' in chatReponse) {

@@ -4,14 +4,16 @@ import { UserType } from './user';
 export interface ChatType {
   _id: string;
   users: UserType[] | string[];
-  createdBy: UserType['_id'];
+  createdBy: UserType | UserType['_id'];
   lastMessage: MessageType | MessageType['_id'];
   isGroupChat: boolean;
   groupName: string;
   groupProfilePicture: string;
   groupBio: string;
   groupAdmins: UserType['_id'][];
-  unreadCount: Record<string, number>;
+  unreadCounts: Record<string, number>;
   createdAt: Date;
   updatedAt: Date;
 }
+
+export type ChatGrouptForm = Pick<ChatType, 'groupName' | 'groupBio'>;

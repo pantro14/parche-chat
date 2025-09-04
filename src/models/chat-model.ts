@@ -10,6 +10,7 @@ const ChatSchema = new Schema(
     groupProfilePicture: { type: String, default: '' },
     groupBio: { type: String, default: '' },
     groupAdmins: { type: [Schema.Types.ObjectId], ref: 'users' },
+    unreadCounts: { type: Object, default: {} },
   },
   { timestamps: true }
 );

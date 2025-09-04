@@ -1,7 +1,4 @@
-import {
-  assertChatisCreated,
-  assertUsersAreGotten,
-} from '@/helpers/type-guards';
+import { assertAreUsers, assertIsChat } from '@/helpers/type-guards';
 import { UserType } from '@/interfaces';
 import { ChatState, SetChats } from '@/redux/chatSlice';
 import { RootState } from '@/redux/store';
@@ -37,7 +34,7 @@ function NewChatModal({
     setLoading(true);
     try {
       const response = await getAllUsers();
-      assertUsersAreGotten(response);
+      assertAreUsers(response);
       setUsers(response);
     } catch (error) {
       if (error instanceof Error) {
@@ -57,7 +54,7 @@ function NewChatModal({
         createdBy: currentUserData!._id,
         isGroupChat: false,
       });
-      assertChatisCreated(response);
+      assertIsChat(response);
       dispatch(SetChats(response));
       message.success('Chat created successfully');
     } catch (error) {
@@ -98,8 +95,10 @@ function NewChatModal({
             {users
               .filter((user) => user._id !== currentUserData?._id)
               .filter((user) =>
-                chats.every((chat) =>
-                  (chat.users as UserType[]).every((u) => u._id !== user._id)
+                chats.every(
+                  (chat) =>
+                    chat.isGroupChat ||
+                    (chat.users as UserType[]).every((u) => u._id !== user._id)
                 )
               )
               .map((user) => (

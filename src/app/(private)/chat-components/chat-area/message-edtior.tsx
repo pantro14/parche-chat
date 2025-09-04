@@ -5,11 +5,12 @@ import { UserState } from '@/redux/userSlice';
 import { sendMessage } from '@/server-actions/messages';
 import { Button, message } from 'antd';
 import TextArea from 'antd/es/input/TextArea';
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
 function MessageEditor() {
   const [text, setText] = useState<string>('');
+  const inputRef = useRef<HTMLTextAreaElement>(null);
 
   const { selectedChat }: ChatState = useSelector(
     (state: RootState) => state.chats
@@ -21,11 +22,12 @@ function MessageEditor() {
   const dispatch = useDispatch();
 
   const onSendMessage = async () => {
+    if (!text.trim()) return;
     try {
       const response = await sendMessage({
         text,
         images: [],
-        sender: currentUserData?._id,
+        sender: currentUserData!._id,
         chat: selectedChat?._id,
       });
       assertMessageIsSent(response);
@@ -46,6 +48,13 @@ function MessageEditor() {
           value={text}
           onChange={(e) => {
             setText(e.target.value);
+          }}
+          ref={inputRef}
+          onPressEnter={(e) => {
+            if (!e.shiftKey) {
+              e.preventDefault();
+              onSendMessage();
+            }
           }}
         />
       </div>

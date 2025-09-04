@@ -1,9 +1,17 @@
-import { assertAreUsers } from '@/helpers/type-guards';
+import { assertAreUsers, assertIsChat } from '@/helpers/type-guards';
+import { getChatDataById } from '@/server-actions/chats';
 import { getAllUsers } from '@/server-actions/users';
 import Link from 'next/link';
-import GroupForm from '../_components/group-form';
+import GroupForm from '../../_components/group-form';
 
-async function CreateGroupPage() {
+interface EditGroupProps {
+  params: Promise<{ id: string }>;
+}
+
+async function EditGroup({ params }: EditGroupProps) {
+  const { id } = await params;
+  const chat = await getChatDataById(id);
+  assertIsChat(chat);
   const users = await getAllUsers();
   assertAreUsers(users);
 
@@ -18,9 +26,9 @@ async function CreateGroupPage() {
       <h1 className='text-primary text-xl font-bold py-5 uppercase'>
         Create Group Chat
       </h1>
-      <GroupForm users={users} />
+      <GroupForm users={users} chat={chat} />
     </div>
   );
 }
 
-export default CreateGroupPage;
+export default EditGroup;
