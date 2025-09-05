@@ -5,8 +5,8 @@ import { UserState } from '@/redux/userSlice';
 import { sendMessage } from '@/server-actions/messages';
 import { Button, message } from 'antd';
 import TextArea from 'antd/es/input/TextArea';
-import { useRef, useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useEffect, useRef, useState } from 'react';
+import { useSelector } from 'react-redux';
 
 function MessageEditor() {
   const [text, setText] = useState<string>('');
@@ -18,8 +18,6 @@ function MessageEditor() {
   const { currentUserData }: UserState = useSelector(
     (state: RootState) => state.user
   );
-
-  const dispatch = useDispatch();
 
   const onSendMessage = async () => {
     if (!text.trim()) return;
@@ -38,6 +36,11 @@ function MessageEditor() {
       }
     }
   };
+
+  useEffect(() => {
+    inputRef.current?.focus();
+  }, [selectedChat]);
+
   return (
     <div className='p-3 bg-gray-100 border-0 border-t border-solid border-gray-200 flex gap-5'>
       <div>{/* Emojis */}</div>

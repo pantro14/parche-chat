@@ -1,12 +1,13 @@
 import { RootState } from '@/redux/store';
 import { SetCurrentUser, UserState } from '@/redux/userSlice';
 import { getCurrentinUserFromDB } from '@/server-actions/users';
-import { Avatar } from 'antd';
+import { Avatar, Skeleton } from 'antd';
 import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import CurrentUserInfo from './current-user-info';
 
 function Header() {
+  const [loading, setLoading] = useState<boolean>(false);
   const [showCurrentUserInfo, setShowCurrentUserInfo] =
     useState<boolean>(false);
 
@@ -18,6 +19,7 @@ function Header() {
 
   const getCurrentUser = async () => {
     try {
+      setLoading(true);
       const response = await getCurrentinUserFromDB();
       dispatch(SetCurrentUser(response));
       if (response.error) throw new Error(response.error);
@@ -27,6 +29,8 @@ function Header() {
           error: error.message,
         };
       }
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -42,16 +46,25 @@ function Header() {
         </div>
         <h1 className='text-2xl font-semibold text-white'>Parche Chat</h1>
       </div>
-      <div className='gap-5 flex items-center'>
-        <span className='text-white'>{currentUserData?.name}</span>
-        <Avatar
-          className='cursor-pointer'
-          src={currentUserData?.profilePicture}
-          onClick={() => {
-            setShowCurrentUserInfo(true);
-          }}
-        />
-      </div>
+      {loading ? (
+        <div className='flex items-center gap-3'>
+          <div className='flex-1 min-w-0'>
+            <Skeleton.Node active style={{ height: 10 }} />
+          </div>
+          <Skeleton.Avatar active shape='circle' size='small' />
+        </div>
+      ) : (
+        <div className='gap-5 flex items-center'>
+          <span className='text-white'>{currentUserData?.name}</span>
+          <Avatar
+            className='cursor-pointer'
+            src={currentUserData?.profilePicture}
+            onClick={() => {
+              setShowCurrentUserInfo(true);
+            }}
+          />
+        </div>
+      )}
       {showCurrentUserInfo && (
         <CurrentUserInfo
           showCurrentUserInfo={showCurrentUserInfo}

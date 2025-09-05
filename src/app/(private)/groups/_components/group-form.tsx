@@ -1,15 +1,16 @@
 'use client';
 import uploadNewImage from '@/helpers/image';
-import { assertIsChat } from '@/helpers/type-guards';
+import { assertChatsAreGotten, assertIsChat } from '@/helpers/type-guards';
 import { UserType } from '@/interfaces';
 import { ChatGrouptForm, ChatType } from '@/interfaces/chat';
+import { SetChats, SetSelectedChat } from '@/redux/chatSlice';
 import { RootState } from '@/redux/store';
 import { UserState } from '@/redux/userSlice';
 import { createNewChat, updateChat } from '@/server-actions/chats';
 import { Avatar, Button, Checkbox, Form, Input, message, Upload } from 'antd';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 
 interface GroupFormProps {
   users: UserType[];
@@ -25,12 +26,17 @@ function GroupForm({ users, chat }: GroupFormProps) {
     useState<File | null>(null);
 
   const router = useRouter();
+  const dispatch = useDispatch();
 
   const { currentUserData }: UserState = useSelector(
     (state: RootState) => state.user
   );
 
   const onFinish = async (values: ChatGrouptForm) => {
+    if (selectedUserIds.length === 0) {
+      message.error('Please select at least one member to create a group');
+      return;
+    }
     try {
       setLoading(true);
       const payload: Partial<ChatType> = {
@@ -55,10 +61,15 @@ function GroupForm({ users, chat }: GroupFormProps) {
       let response = null;
       if (chat) {
         response = await updateChat(chat._id, payload);
+        assertIsChat(response);
+        dispatch(SetSelectedChat(response)); // selects current chat
       } else {
         response = await createNewChat(payload);
+        assertChatsAreGotten(response);
+        dispatch(SetChats(response)); // adds new chat to the list
+        dispatch(SetSelectedChat(response[0])); // selects the newly created chat
       }
-      assertIsChat(response);
+
       message.success(`Group ${chat ? 'updated' : 'created'} successfully`);
       router.refresh();
       router.push('/');

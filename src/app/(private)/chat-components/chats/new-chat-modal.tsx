@@ -86,7 +86,7 @@ function NewChatModal({
         </h1>
         {loading && !selectedUserId ? (
           <div className='flex py-2 flex-col'>
-            {Array.from(Array(3).keys()).map((key) => (
+            {Array.from(Array(4).keys()).map((key) => (
               <ChatCardSkeleton key={key} />
             ))}
           </div>

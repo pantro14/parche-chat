@@ -10,6 +10,9 @@ export const createNewChat = async (chat: Partial<ChatType>) => {
       users: { $in: [chat.createdBy] },
     })
       .populate('users')
+      .populate('lastMessage')
+      .populate('createdBy')
+      .populate({ path: 'lastMessage', populate: { path: 'sender' } })
       .sort({ updatedAt: -1 });
     return JSON.parse(JSON.stringify(newChats));
   } catch (error: unknown) {
@@ -29,7 +32,6 @@ export const getChatsByUserId = async (userId: string) => {
       .populate('createdBy')
       .populate({ path: 'lastMessage', populate: { path: 'sender' } })
       .sort({ updatedAt: -1 });
-    await new Promise((resolve) => setTimeout(resolve, 2000)); // TODO: Remove this line
     return JSON.parse(JSON.stringify(users));
   } catch (error: unknown) {
     if (error instanceof Error) {
@@ -64,7 +66,7 @@ export const updateChat = async (
   try {
     const updatedChat = await ChatModel.findByIdAndUpdate(chatId, updatedData, {
       new: true,
-    });
+    }).populate('users');
     return JSON.parse(JSON.stringify(updatedChat));
   } catch (error: unknown) {
     if (error instanceof Error) {

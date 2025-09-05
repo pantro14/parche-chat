@@ -42,19 +42,20 @@ function ChatList() {
 
   return (
     <div>
-      {chats.length > 0 && (
-        <div className='flex py-2 flex-col'>
-          {chats.map((chat) => (
-            <ChatCard chat={chat} key={chat._id} />
-          ))}
-        </div>
-      )}
-      {loading && (
+      {loading ? (
         <div className='flex py-2 flex-col'>
           {Array.from(Array(5).keys()).map((key) => (
             <ChatCardSkeleton key={key} />
           ))}
         </div>
+      ) : (
+        chats.length > 0 && (
+          <div className='flex py-2 flex-col'>
+            {chats.map((chat) => (
+              <ChatCard chat={chat} key={chat._id} />
+            ))}
+          </div>
+        )
       )}
     </div>
   );

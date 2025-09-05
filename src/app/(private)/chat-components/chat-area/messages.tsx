@@ -25,7 +25,6 @@ function Messages() {
       setLoading(true);
       const response = await getChatMessages(selectedChat!._id);
       assertMessagesAreGotten(response);
-      console.log(response);
       setMessages(response);
     } catch (error) {
       if (error instanceof Error) {

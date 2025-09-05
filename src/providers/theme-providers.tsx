@@ -24,6 +24,10 @@ export default function ThemeProvider({
             controlOutline: 'none',
             colorBorder: '#31304D',
           },
+          Skeleton: {
+            gradientFromColor: '#EEEEEE',
+            gradientToColor: '#CECECE',
+          },
         },
       }}
     >
