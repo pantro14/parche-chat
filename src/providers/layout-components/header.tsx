@@ -1,5 +1,6 @@
+import socket from '@/config/socket';
 import { RootState } from '@/redux/store';
-import { SetCurrentUser, UserState } from '@/redux/userSlice';
+import { SetCurrentUser, SetOnlineUsers, UserState } from '@/redux/userSlice';
 import { getCurrentinUserFromDB } from '@/server-actions/users';
 import { Avatar, Skeleton } from 'antd';
 import { useEffect, useState } from 'react';
@@ -37,6 +38,15 @@ function Header() {
   useEffect(() => {
     getCurrentUser();
   }, []);
+
+  useEffect(() => {
+    if (currentUserData) {
+      socket.emit('join', currentUserData._id);
+      socket.on('online-users-updated', (onlineUsers) => {
+        dispatch(SetOnlineUsers(onlineUsers));
+      });
+    }
+  }, [currentUserData]);
 
   return (
     <div className='bg-primary w-full p-5 flex justify-between items-center border-b border-solid border-gray-300'>

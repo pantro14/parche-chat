@@ -4,11 +4,13 @@ import { createSlice } from '@reduxjs/toolkit';
 export type UserState = {
   currentUserData: UserType | null;
   currentUserId: string;
+  onlineUsers: string[]; // Array of online user IDs
 };
 
 const initialState: UserState = {
   currentUserData: null,
   currentUserId: '',
+  onlineUsers: [],
 };
 
 const userSlice = createSlice({
@@ -21,9 +23,13 @@ const userSlice = createSlice({
     SetCurrentUserId(state, action) {
       state.currentUserId = action.payload;
     },
+    SetOnlineUsers(state, action) {
+      state.onlineUsers = action.payload;
+    },
   },
 });
 
-export const { SetCurrentUser, SetCurrentUserId } = userSlice.actions;
+export const { SetCurrentUser, SetCurrentUserId, SetOnlineUsers } =
+  userSlice.actions;
 
 export default userSlice;

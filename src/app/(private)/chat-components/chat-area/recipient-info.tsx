@@ -21,13 +21,7 @@ function RecipientInfo({
     (state: RootState) => state.chats
   );
 
-  const {
-    isGroupChat,
-    users,
-    groupName,
-    groupProfilePicture,
-    lastMessage: lastChatMessage,
-  } = selectedChat!;
+  const { isGroupChat, users, groupName, groupProfilePicture } = selectedChat!;
 
   const { currentUserData }: UserState = useSelector(
     (state: RootState) => state.user

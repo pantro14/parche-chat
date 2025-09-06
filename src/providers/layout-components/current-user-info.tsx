@@ -1,3 +1,4 @@
+import socket from '@/config/socket';
 import uploadNewImage from '@/helpers/image';
 import { assertUserIsUpdated } from '@/helpers/type-guards';
 import { RootState } from '@/redux/store';
@@ -51,6 +52,7 @@ function CurrentUserInfo({
       message.error(error.message);
     } finally {
       setLoading(false);
+      socket.emit('logout', currentUserData!._id);
     }
   };
 

@@ -13,7 +13,7 @@ function Recipient() {
   const { selectedChat }: ChatState = useSelector(
     (state: RootState) => state.chats
   );
-  const { currentUserData }: UserState = useSelector(
+  const { currentUserData, onlineUsers }: UserState = useSelector(
     (state: RootState) => state.user
   );
 
@@ -28,6 +28,13 @@ function Recipient() {
     ? groupProfilePicture
     : recipient?.profilePicture;
 
+  const onlineIndicator = () => {
+    if (recipient && onlineUsers.includes(recipient._id)) {
+      return <span className='text-green-500 italic text-xs'>Online</span>;
+    }
+    return null;
+  };
+
   return (
     <div className='flex justify-between py-3 px-5 border-0 border-b border-gray-200 border-solid bg-gray-200'>
       <div className='flex gap-5 items-center'>
@@ -36,7 +43,10 @@ function Recipient() {
           className='w-10 h-10 rounded-full cursor-pointer'
           onClick={() => setShowRecipientInfo(true)}
         ></Avatar>
-        <span className='text-gray-700 text-sm'>{chatName}</span>
+        <div className='flex flex-col'>
+          <span className='text-gray-700 text-sm'>{chatName}</span>
+          {onlineIndicator()}
+        </div>
       </div>
       {showRecipientInfo && (
         <RecipientInfo {...{ showRecipientInfo, setShowRecipientInfo }} />
