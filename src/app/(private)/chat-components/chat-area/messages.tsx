@@ -1,11 +1,13 @@
+import socket from '@/config/socket';
 import { assertMessagesAreGotten } from '@/helpers/type-guards';
+import { ChatType } from '@/interfaces/chat';
 import { MessageType } from '@/interfaces/message';
 import { ChatState } from '@/redux/chatSlice';
 import { RootState } from '@/redux/store';
 import { UserState } from '@/redux/userSlice';
 import { getChatMessages, readAllMessages } from '@/server-actions/messages';
 import { message } from 'antd';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useSelector } from 'react-redux';
 import MessagePopup from './messasge-popup';
 
@@ -19,6 +21,8 @@ function Messages() {
   const { currentUserData }: UserState = useSelector(
     (state: RootState) => state.user
   );
+
+  const messagesRef = useRef<HTMLDivElement>(null);
 
   const getMessages = async () => {
     try {
@@ -42,11 +46,35 @@ function Messages() {
     }
   }, [selectedChat]);
 
+  useEffect(() => {
+    socket.on('new-message-received', (message: MessageType) => {
+      if (selectedChat?._id === (message.chat as ChatType)._id) {
+        setMessages((prevMessages) => {
+          const isMessageExists = prevMessages.some(
+            (msg) => msg.socketMessageId === message.socketMessageId
+          );
+          return [...prevMessages, ...(isMessageExists ? [] : [message])];
+        });
+      }
+    });
+  }, [selectedChat]);
+
+  useEffect(() => {
+    if (messagesRef.current) {
+      messagesRef.current.scrollTop = messagesRef.current.scrollHeight;
+    }
+  }, [messages]);
+
   return (
-    <div className='flex-1 p-3 overflow-y-auto scrollbar-hide'>
+    <div
+      className='flex-1 p-3 overflow-y-auto scrollbar-hide'
+      ref={messagesRef}
+    >
       <div className='flex flex-col gap-3'>
         {messages.map((message) => {
-          return <MessagePopup key={message._id} message={message} />;
+          return (
+            <MessagePopup key={message.socketMessageId} message={message} />
+          );
         })}
       </div>
     </div>

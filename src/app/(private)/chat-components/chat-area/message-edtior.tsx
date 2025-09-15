@@ -1,4 +1,4 @@
-import { assertMessageIsSent } from '@/helpers/type-guards';
+import socket from '@/config/socket';
 import { ChatState } from '@/redux/chatSlice';
 import { RootState } from '@/redux/store';
 import { UserState } from '@/redux/userSlice';
@@ -22,14 +22,27 @@ function MessageEditor() {
   const onSendMessage = async () => {
     if (!text.trim()) return;
     try {
-      const response = await sendMessage({
+      const commonPayload = {
         text,
         images: [],
+        socketMessageId: Date.now().toString(),
+      };
+
+      // Socket comunication
+      socket.emit('send-new-message', {
+        ...commonPayload,
+        sender: currentUserData,
+        chat: selectedChat,
+      });
+
+      setText('');
+
+      // REST API comunication
+      sendMessage({
+        ...commonPayload,
         sender: currentUserData!._id,
         chat: selectedChat?._id,
       });
-      assertMessageIsSent(response);
-      setText('');
     } catch (error) {
       if (error instanceof Error) {
         message.error(error.message);
