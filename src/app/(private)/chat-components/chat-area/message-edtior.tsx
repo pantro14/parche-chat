@@ -56,6 +56,13 @@ function MessageEditor() {
     inputRef.current?.focus();
   }, [selectedChat]);
 
+  useEffect(() => {
+    socket.emit('typing', {
+      chat: selectedChat,
+      senderId: currentUserData?._id,
+    });
+  }, [currentUserData, selectedChat, text]);
+
   return (
     <div className='p-3 bg-gray-100 border-0 border-t border-solid border-gray-200 flex gap-5'>
       <div>{/* Emojis */}</div>

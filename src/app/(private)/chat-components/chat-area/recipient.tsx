@@ -1,14 +1,17 @@
+import socket from '@/config/socket';
 import { UserType } from '@/interfaces';
+import { ChatType } from '@/interfaces/chat';
 import { ChatState } from '@/redux/chatSlice';
 import { RootState } from '@/redux/store';
 import { UserState } from '@/redux/userSlice';
 import { Avatar } from 'antd';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import RecipientInfo from './recipient-info';
 
 function Recipient() {
   const [showRecipientInfo, setShowRecipientInfo] = useState<boolean>(false);
+  const [typing, setTyping] = useState<boolean>(false);
 
   const { selectedChat }: ChatState = useSelector(
     (state: RootState) => state.chats
@@ -35,6 +38,26 @@ function Recipient() {
     return null;
   };
 
+  const typingIndicator = () => {
+    if (typing) {
+      return <span className='text-primary italic text-xs'>Typing...</span>;
+    }
+    return null;
+  };
+
+  useEffect(() => {
+    socket.on('typing', (chat: ChatType) => {
+      if (selectedChat?._id === chat._id) {
+        setTyping(true);
+      }
+      setTimeout(() => setTyping(false), 2000);
+    });
+
+    return () => {
+      socket.off('typing');
+    };
+  }, [selectedChat]);
+
   return (
     <div className='flex justify-between py-3 px-5 border-0 border-b border-gray-200 border-solid bg-gray-200'>
       <div className='flex gap-5 items-center'>
@@ -45,7 +68,8 @@ function Recipient() {
         ></Avatar>
         <div className='flex flex-col'>
           <span className='text-gray-700 text-sm'>{chatName}</span>
-          {onlineIndicator()}
+          {!typing && onlineIndicator()}
+          {typingIndicator()}
         </div>
       </div>
       {showRecipientInfo && (

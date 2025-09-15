@@ -3,7 +3,7 @@ import ChatList from './chat-lists';
 
 function Chats() {
   return (
-    <div className='w-[500px] h-full p-3'>
+    <div className='w-[40%] lg:w-[50%] h-full p-3'>
       <ChatHeader />
       <ChatList />
     </div>

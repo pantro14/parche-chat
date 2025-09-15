@@ -79,7 +79,7 @@ function ChatCard({ chat }: ChatCardProps) {
         <Avatar src={chatImage} size='large'></Avatar>
         <div className='flex flex-col gap-1'>
           <span className='text-gray-700 text-sm'>{chatName}</span>
-          <span className='text-gray-400 text-xs truncate w-70'>
+          <span className='text-gray-400 text-xs truncate w-[20%] lg:w-70'>
             {''}
             {lastMessageSenderName} {lastMessage}
           </span>
