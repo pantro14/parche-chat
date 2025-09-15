@@ -26,6 +26,8 @@ function MessageEditor() {
         text,
         images: [],
         socketMessageId: Date.now().toString(),
+        createdAt: new Date(),
+        updatedAt: new Date(),
       };
 
       // Socket comunication
