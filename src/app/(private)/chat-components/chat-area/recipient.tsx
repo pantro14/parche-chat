@@ -12,6 +12,7 @@ import RecipientInfo from './recipient-info';
 function Recipient() {
   const [showRecipientInfo, setShowRecipientInfo] = useState<boolean>(false);
   const [typing, setTyping] = useState<boolean>(false);
+  const [senderName, setSenderName] = useState<string>('');
 
   const { selectedChat }: ChatState = useSelector(
     (state: RootState) => state.chats
@@ -40,18 +41,31 @@ function Recipient() {
 
   const typingIndicator = () => {
     if (typing) {
-      return <span className='text-primary italic text-xs'>Typing...</span>;
+      return (
+        <span className='text-primary italic text-xs'>
+          {isGroupChat ? `${senderName} is typing...` : 'Typing...'}
+        </span>
+      );
     }
     return null;
   };
 
   useEffect(() => {
-    socket.on('typing', (chat: ChatType) => {
-      if (selectedChat?._id === chat._id) {
-        setTyping(true);
+    socket.on(
+      'typing',
+      ({ chat, senderName }: { chat: ChatType; senderName: string }) => {
+        if (selectedChat?._id === chat._id) {
+          setTyping(true);
+          if (chat.isGroupChat) {
+            setSenderName(senderName);
+          }
+        }
+        setTimeout(() => {
+          setTyping(false);
+          setSenderName(senderName);
+        }, 2000);
       }
-      setTimeout(() => setTyping(false), 2000);
-    });
+    );
 
     return () => {
       socket.off('typing');

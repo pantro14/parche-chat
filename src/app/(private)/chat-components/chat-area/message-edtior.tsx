@@ -54,12 +54,16 @@ function MessageEditor() {
 
   useEffect(() => {
     inputRef.current?.focus();
+    return () => {
+      setText('');
+    };
   }, [selectedChat]);
 
   useEffect(() => {
     socket.emit('typing', {
       chat: selectedChat,
-      senderId: currentUserData?._id,
+      senderId: currentUserData!._id,
+      senderName: currentUserData!.name,
     });
   }, [currentUserData, selectedChat, text]);
 
