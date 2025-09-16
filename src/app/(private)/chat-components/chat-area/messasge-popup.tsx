@@ -1,10 +1,10 @@
 import { formatDateTime } from '@/helpers/date-format';
 import { UserType } from '@/interfaces';
 import { MessageType } from '@/interfaces/message';
-import { ChatState } from '@/redux/chatSlice';
 import { RootState } from '@/redux/store';
 import { UserState } from '@/redux/userSlice';
 import { Avatar } from 'antd';
+import Image from 'next/image';
 import { useSelector } from 'react-redux';
 
 interface MessagePopUpProps {
@@ -12,9 +12,6 @@ interface MessagePopUpProps {
 }
 
 function MessagePopup({ message }: MessagePopUpProps) {
-  const { selectedChat }: ChatState = useSelector(
-    (state: RootState) => state.chats
-  );
   const { currentUserData }: UserState = useSelector(
     (state: RootState) => state.user
   );
@@ -25,9 +22,19 @@ function MessagePopup({ message }: MessagePopUpProps) {
     return (
       <div className='flex justify-end gap-2'>
         <div className='flex flex-col gap-2'>
-          <p className='bg-primary text-white py-2 px-5 rounded-xl rounded-tl-none text-sm'>
-            {message.text}
-          </p>
+          <div className='bg-primary py-2 px-5 rounded-xl rounded-tl-none'>
+            {message.text && (
+              <p className='text-white text-sm'>{message.text}</p>
+            )}
+            {message.images && message.images.length > 0 && (
+              <Image
+                src={message.images[0]}
+                alt='message photo'
+                width={100}
+                height={100}
+              />
+            )}
+          </div>
           <span className='text-xs text-gray-500'>
             {formatDateTime(message.createdAt)}
           </span>
@@ -53,7 +60,17 @@ function MessagePopup({ message }: MessagePopUpProps) {
             <span className='text-blue-500 text-xs font-semibold'>
               {sender?.name}
             </span>
-            <p className='text-black m-0 pt-1 text-sm'>{message.text}</p>
+            {message.text && (
+              <p className='text-black m-0 pt-1 text-sm'>{message.text}</p>
+            )}
+            {message.images && message.images.length > 0 && (
+              <Image
+                src={message.images[0]}
+                alt='message photo'
+                width={100}
+                height={100}
+              />
+            )}
           </div>
           <span className='text-xs text-gray-500'>
             {formatDateTime(message.createdAt)}

@@ -5,9 +5,9 @@ const MessageSchema = new Schema(
     socketMessageId: { type: String, default: '' },
     chat: { type: Schema.Types.ObjectId, ref: 'chats', required: true },
     sender: { type: Schema.Types.ObjectId, ref: 'users', required: true },
-    text: { type: String, required: true },
-    images: { type: [String], default: '' },
-    readBy: { type: [Schema.Types.ObjectId], ref: 'users' },
+    text: { type: String, default: '' },
+    images: { type: [String], default: [] },
+    readBy: { type: [Schema.Types.ObjectId], ref: 'users', default: [] },
   },
   { timestamps: true }
 );

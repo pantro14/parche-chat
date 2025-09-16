@@ -6,6 +6,7 @@ import '@ant-design/v5-patch-for-react-19';
 import { ClerkProvider } from '@clerk/nextjs';
 import type { Metadata } from 'next';
 import { Montserrat } from 'next/font/google';
+import 'remixicon/fonts/remixicon.css';
 import './globals.css';
 
 const montserrat = Montserrat({
