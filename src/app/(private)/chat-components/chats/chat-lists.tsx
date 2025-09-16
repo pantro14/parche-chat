@@ -57,8 +57,9 @@ function ChatList() {
         (chat) => chat._id === newMessageChat._id
       );
       const isSameMessage =
+        existingChat?.lastMessage &&
         (existingChat?.lastMessage as MessageType).socketMessageId ===
-        newMessage.socketMessageId;
+          newMessage.socketMessageId;
 
       if (existingChat && !isSameMessage) {
         // Update last message of the chat
@@ -70,12 +71,12 @@ function ChatList() {
 
         // Update unread counts
         const messageSender = newMessage.sender as UserType;
-        const isMessageSenderCurrentUser =
+        const isMessageSenderAnotherUser =
           messageSender._id !== currentUserData?._id;
         const isMessageFromAnotherChat =
           selectedChat?._id !== newMessageChat._id;
 
-        if (isMessageSenderCurrentUser || isMessageFromAnotherChat) {
+        if (isMessageSenderAnotherUser || isMessageFromAnotherChat) {
           chatCopy.unreadCounts = {
             ...chatCopy.unreadCounts,
             [currentUserData?._id as string]:
@@ -90,6 +91,9 @@ function ChatList() {
         dispatch(SetChats([chatCopy, ...filteredChats]));
       }
     });
+    return () => {
+      socket.off('new-message-received');
+    };
   }, [selectedChat]);
 
   return (

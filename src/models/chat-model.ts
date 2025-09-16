@@ -11,6 +11,7 @@ const ChatSchema = new Schema(
     groupBio: { type: String, default: '' },
     groupAdmins: { type: [Schema.Types.ObjectId], ref: 'users' },
     unreadCounts: { type: Object, default: {} },
+    lastMessageAt: { type: Date, default: Date.now },
   },
   { timestamps: true }
 );

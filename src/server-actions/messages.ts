@@ -21,6 +21,7 @@ export const sendMessage = async (message: Partial<MessageType>) => {
     await ChatModel.findByIdAndUpdate(message.chat, {
       lastMessage: newMessage._id,
       unreadCounts,
+      lastMessageAt: new Date(),
     });
     return JSON.parse(JSON.stringify(newMessage));
   } catch (error: unknown) {

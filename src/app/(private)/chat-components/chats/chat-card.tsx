@@ -53,7 +53,11 @@ function ChatCard({ chat }: ChatCardProps) {
   }
 
   const unreadCounts = () => {
-    if (!chat.unreadCounts || !chat.unreadCounts[currentUserData!._id]) {
+    if (
+      !chat.unreadCounts ||
+      !chat.unreadCounts[currentUserData!._id] ||
+      chat._id === selectedChat?._id
+    ) {
       return <div className='flex-1'></div>;
     }
 

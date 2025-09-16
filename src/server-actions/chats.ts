@@ -31,7 +31,7 @@ export const getChatsByUserId = async (userId: string) => {
       .populate('lastMessage')
       .populate('createdBy')
       .populate({ path: 'lastMessage', populate: { path: 'sender' } })
-      .sort({ updatedAt: -1 });
+      .sort({ lastMessageAt: -1 });
     return JSON.parse(JSON.stringify(users));
   } catch (error: unknown) {
     if (error instanceof Error) {

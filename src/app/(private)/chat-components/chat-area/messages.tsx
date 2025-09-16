@@ -2,25 +2,27 @@ import socket from '@/config/socket';
 import { assertMessagesAreGotten } from '@/helpers/type-guards';
 import { ChatType } from '@/interfaces/chat';
 import { MessageType } from '@/interfaces/message';
-import { ChatState } from '@/redux/chatSlice';
+import { ChatState, SetChats } from '@/redux/chatSlice';
 import { RootState } from '@/redux/store';
 import { UserState } from '@/redux/userSlice';
 import { getChatMessages, readAllMessages } from '@/server-actions/messages';
 import { message } from 'antd';
 import { useEffect, useRef, useState } from 'react';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import MessagePopup from './messasge-popup';
 
 function Messages() {
   const [messages, setMessages] = useState<MessageType[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
 
-  const { selectedChat }: ChatState = useSelector(
+  const { selectedChat, chats }: ChatState = useSelector(
     (state: RootState) => state.chats
   );
   const { currentUserData }: UserState = useSelector(
     (state: RootState) => state.user
   );
+
+  const dispatch = useDispatch();
 
   const messagesRef = useRef<HTMLDivElement>(null);
 
@@ -42,8 +44,10 @@ function Messages() {
   useEffect(() => {
     if (selectedChat) {
       getMessages();
-      readAllMessages(selectedChat?._id, currentUserData!._id);
     }
+    return () => {
+      setMessages([]);
+    };
   }, [selectedChat]);
 
   useEffect(() => {
@@ -63,6 +67,16 @@ function Messages() {
     if (messagesRef.current) {
       messagesRef.current.scrollTop = messagesRef.current.scrollHeight;
     }
+    readAllMessages(selectedChat!._id, currentUserData!._id);
+    // set unread messages to 0 for selected chat
+    const chatList = chats.map((chat) => ({
+      ...chat,
+      unreadCounts:
+        chat._id === selectedChat!._id
+          ? { ...chat.unreadCounts, [currentUserData!._id]: 0 }
+          : chat.unreadCounts,
+    }));
+    dispatch(SetChats(chatList));
   }, [messages]);
 
   return (
