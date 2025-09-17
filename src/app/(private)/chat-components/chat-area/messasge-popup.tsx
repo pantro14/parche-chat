@@ -1,6 +1,7 @@
 import { formatDateTime } from '@/helpers/date-format';
 import { UserType } from '@/interfaces';
 import { MessageType } from '@/interfaces/message';
+import { ChatState } from '@/redux/chatSlice';
 import { RootState } from '@/redux/store';
 import { UserState } from '@/redux/userSlice';
 import { Avatar } from 'antd';
@@ -15,6 +16,14 @@ function MessagePopup({ message }: MessagePopUpProps) {
   const { currentUserData }: UserState = useSelector(
     (state: RootState) => state.user
   );
+  const { selectedChat }: ChatState = useSelector(
+    (state: RootState) => state.chats
+  );
+
+  let read = false;
+  if (selectedChat!.users?.length - 1 === message.readBy.length) {
+    read = true;
+  }
 
   const sender = message.sender as UserType;
 
@@ -51,9 +60,16 @@ function MessagePopup({ message }: MessagePopUpProps) {
             )}
             {messageImages()}
           </div>
-          <span className='text-xs text-gray-500'>
-            {formatDateTime(message.createdAt)}
-          </span>
+          <div className='flex justify-between items-center gap-2'>
+            <span className='text-xs text-gray-500'>
+              {formatDateTime(message.createdAt)}
+            </span>
+            <i
+              className={`ri-check-double-line ${
+                read ? 'text-blue-500' : 'text-gray-500'
+              }`}
+            ></i>
+          </div>
         </div>
         <Avatar
           src={sender.profilePicture}

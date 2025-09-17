@@ -47,6 +47,7 @@ function MessageEditor() {
         socketMessageId: Date.now().toString(),
         createdAt: new Date(),
         updatedAt: new Date(),
+        readBy: [],
       };
 
       // Socket comunication

@@ -13,7 +13,6 @@ import MessagePopup from './messasge-popup';
 
 function Messages() {
   const [messages, setMessages] = useState<MessageType[]>([]);
-  const [loading, setLoading] = useState<boolean>(false);
 
   const { selectedChat, chats }: ChatState = useSelector(
     (state: RootState) => state.chats
@@ -28,7 +27,6 @@ function Messages() {
 
   const getMessages = async () => {
     try {
-      setLoading(true);
       const response = await getChatMessages(selectedChat!._id);
       assertMessagesAreGotten(response);
       setMessages(response);
@@ -36,8 +34,6 @@ function Messages() {
       if (error instanceof Error) {
         message.error(error.message);
       }
-    } finally {
-      setLoading(false);
     }
   };
 
@@ -85,11 +81,12 @@ function Messages() {
       ref={messagesRef}
     >
       <div className='flex flex-col gap-3'>
-        {messages.map((message) => {
-          return (
-            <MessagePopup key={message.socketMessageId} message={message} />
-          );
-        })}
+        {messages.length > 0 &&
+          messages.map((message) => {
+            return (
+              <MessagePopup key={message.socketMessageId} message={message} />
+            );
+          })}
       </div>
     </div>
   );
