@@ -51,7 +51,22 @@ function ChatList() {
     socket.on('new-message-received', (newMessage: MessageType) => {
       const { chats, selectedChat }: ChatState = store.getState().chats;
       const { currentUserData }: UserState = store.getState().user;
+
       const newMessageChat = newMessage.chat as ChatType;
+
+      // If there are no chats, add in the list
+      if (chats.length === 0 && !selectedChat) {
+        const chatCopy: ChatType = {
+          ...newMessageChat,
+          lastMessage: newMessage,
+          updatedAt: newMessage.createdAt,
+          unreadCounts: {
+            [currentUserData!._id as string]: 1,
+          },
+        };
+        dispatch(SetChats([chatCopy]));
+        return;
+      }
 
       const existingChat = chats.find(
         (chat) => chat._id === newMessageChat._id

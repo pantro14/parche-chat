@@ -86,7 +86,7 @@ function Messages() {
 
     const unreadMessages = chats.reduce(
       (acc, chat) =>
-        chat._id === selectedChat!._id
+        chat.unreadCounts && chat._id === selectedChat!._id
           ? acc + (chat.unreadCounts[currentUserData!._id] || 0)
           : acc,
       0
