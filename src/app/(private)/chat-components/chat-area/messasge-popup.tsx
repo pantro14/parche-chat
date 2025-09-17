@@ -18,6 +18,29 @@ function MessagePopup({ message }: MessagePopUpProps) {
 
   const sender = message.sender as UserType;
 
+  const messageImages = () => {
+    if (message.images && message.images.length > 0) {
+      return (
+        <div
+          className={`grid gap-1 ${
+            message.images.length === 1 ? 'grid-cols-1' : 'grid-cols-2'
+          }`}
+        >
+          {message.images.map((img, index) => (
+            <Image
+              key={index}
+              src={img}
+              alt='message photo'
+              width={100}
+              height={100}
+            />
+          ))}
+        </div>
+      );
+    }
+    return null;
+  };
+
   if (sender?._id === currentUserData?._id) {
     return (
       <div className='flex justify-end gap-2'>
@@ -26,14 +49,7 @@ function MessagePopup({ message }: MessagePopUpProps) {
             {message.text && (
               <p className='text-white text-sm'>{message.text}</p>
             )}
-            {message.images && message.images.length > 0 && (
-              <Image
-                src={message.images[0]}
-                alt='message photo'
-                width={100}
-                height={100}
-              />
-            )}
+            {messageImages()}
           </div>
           <span className='text-xs text-gray-500'>
             {formatDateTime(message.createdAt)}
@@ -63,14 +79,7 @@ function MessagePopup({ message }: MessagePopUpProps) {
             {message.text && (
               <p className='text-black m-0 pt-1 text-sm'>{message.text}</p>
             )}
-            {message.images && message.images.length > 0 && (
-              <Image
-                src={message.images[0]}
-                alt='message photo'
-                width={100}
-                height={100}
-              />
-            )}
+            {messageImages()}
           </div>
           <span className='text-xs text-gray-500'>
             {formatDateTime(message.createdAt)}
