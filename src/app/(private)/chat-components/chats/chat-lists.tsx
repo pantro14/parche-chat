@@ -53,9 +53,12 @@ function ChatList() {
       const { currentUserData }: UserState = store.getState().user;
 
       const newMessageChat = newMessage.chat as ChatType;
+      const existingChat = chats.find(
+        (chat) => chat._id === newMessageChat._id
+      );
 
       // If there are no chats, add in the list
-      if (chats.length === 0 && !selectedChat) {
+      if (chats.length === 0 || !existingChat) {
         const chatCopy: ChatType = {
           ...newMessageChat,
           lastMessage: newMessage,
@@ -64,13 +67,10 @@ function ChatList() {
             [currentUserData!._id as string]: 1,
           },
         };
-        dispatch(SetChats([chatCopy]));
+        dispatch(SetChats([chatCopy, ...chats]));
         return;
       }
 
-      const existingChat = chats.find(
-        (chat) => chat._id === newMessageChat._id
-      );
       const isSameMessage =
         existingChat?.lastMessage &&
         (existingChat?.lastMessage as MessageType).socketMessageId ===
