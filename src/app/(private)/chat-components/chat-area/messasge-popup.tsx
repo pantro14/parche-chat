@@ -53,14 +53,14 @@ function MessagePopup({ message }: MessagePopUpProps) {
   if (sender?._id === currentUserData?._id) {
     return (
       <div className='flex justify-end gap-2'>
-        <div className='flex flex-col gap-2'>
+        <div className='flex flex-col'>
           <div className='bg-primary py-2 px-5 rounded-xl rounded-tl-none'>
             {message.text && (
               <p className='text-white text-sm'>{message.text}</p>
             )}
             {messageImages()}
           </div>
-          <div className='flex justify-between items-center gap-2'>
+          <div className='flex justify-between items-center'>
             <span className='text-xs text-gray-500'>
               {formatDateTime(message.createdAt)}
             </span>

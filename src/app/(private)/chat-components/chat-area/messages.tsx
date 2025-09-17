@@ -1,5 +1,6 @@
 import socket from '@/config/socket';
 import { assertMessagesAreGotten } from '@/helpers/type-guards';
+import { UserType } from '@/interfaces';
 import { ChatType } from '@/interfaces/chat';
 import { MessageType } from '@/interfaces/message';
 import { ChatState, SetChats } from '@/redux/chatSlice';
@@ -57,13 +58,53 @@ function Messages() {
         });
       }
     });
+
+    // listens for message read updates
+    socket.on(
+      'user-read-all-chat-messages',
+      ({ chatId, readByUserId }: { chatId: string; readByUserId: string }) => {
+        if (selectedChat?._id === chatId) {
+          setMessages((prevMessages) =>
+            prevMessages.map((msg) => ({
+              ...msg,
+              readBy:
+                (msg.sender as UserType)._id !== readByUserId &&
+                msg.readBy.includes(readByUserId)
+                  ? msg.readBy
+                  : [...msg.readBy, readByUserId],
+            }))
+          );
+        }
+      }
+    );
   }, [selectedChat]);
 
   useEffect(() => {
     if (messagesRef.current) {
       messagesRef.current.scrollTop = messagesRef.current.scrollHeight;
     }
-    readAllMessages(selectedChat!._id, currentUserData!._id);
+
+    const unreadMessages = chats.reduce(
+      (acc, chat) =>
+        chat._id === selectedChat!._id
+          ? acc + (chat.unreadCounts[currentUserData!._id] || 0)
+          : acc,
+      0
+    );
+
+    if (unreadMessages > 0) {
+      // mark all messages as read in the db
+      readAllMessages(selectedChat!._id, currentUserData!._id);
+      // notify other users in the chat that current user has read all messages
+      socket.emit('read-all-messages', {
+        chatId: selectedChat!._id,
+        readByUserId: currentUserData!._id,
+        users: (selectedChat!.users as UserType[])
+          .filter((user) => user._id !== currentUserData!._id)
+          .map((user) => user._id),
+      });
+    }
+
     // set unread messages to 0 for selected chat
     const chatList = chats.map((chat) => ({
       ...chat,
